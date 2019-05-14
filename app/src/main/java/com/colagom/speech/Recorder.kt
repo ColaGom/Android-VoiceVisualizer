@@ -9,13 +9,12 @@ interface Recorder {
 
     interface Listener {
         fun onRecorded(buffer: ByteArray)
-        fun finishedRecording()
+        fun onFinisehdRecord()
     }
 
     enum class State {
         WAIT,
         RECORDING,
-        RECORDED,
         STOP
     }
 }

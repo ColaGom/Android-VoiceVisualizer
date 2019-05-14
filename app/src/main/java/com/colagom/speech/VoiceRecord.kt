@@ -3,6 +3,11 @@ package com.colagom.speech
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.media.audiofx.AcousticEchoCanceler
+import android.media.audiofx.NoiseSuppressor
+import com.colagom.common.Channel
+import com.colagom.common.Format
+import com.colagom.common.WaveHeader
 
 class VoiceRecord(config: Config = Config.Default) : AudioRecord(
     config.audioSource,
@@ -13,8 +18,8 @@ class VoiceRecord(config: Config = Config.Default) : AudioRecord(
 ) {
 
     init {
-//        NoiseSuppressor.create(audioSessionId)
-//        AcousticEchoCanceler.create(audioSessionId)
+        NoiseSuppressor.create(audioSessionId)
+        AcousticEchoCanceler.create(audioSessionId)
     }
 
     data class ConfigData(
@@ -22,14 +27,8 @@ class VoiceRecord(config: Config = Config.Default) : AudioRecord(
         val sampleRate: Int,
         val audioChannel: Int,
         val audioFormat: Int
-    ) {
-        val chnnelSize = if (audioChannel == AudioFormat.CHANNEL_IN_MONO) 1 else 2
-        val bitPerSample = if (audioFormat == AudioFormat.ENCODING_PCM_16BIT) 16 else 8
-        // sample rate * TIME_INVERVAL / 1000
-        val bytePerFrame get() = sampleRate * 120 / 1000
-        val minBufferSize
-            get() = bytePerFrame * chnnelSize * bitPerSample / 4
-    }
+    )
+
 
     sealed class Config {
         abstract val value: ConfigData
@@ -45,11 +44,19 @@ class VoiceRecord(config: Config = Config.Default) : AudioRecord(
                 audioFormat
             ) * 2
 
+        fun toWaveHeader(fileLength: Int) =
+            WaveHeader.Builder()
+                .setChannel(if (audioChanel == AudioFormat.CHANNEL_IN_MONO) Channel.Mono else Channel.Stereo)
+                .setSampleRate(sampleRate)
+                .setFileLength(fileLength)
+                .setFormat(Format.PCM)
+                .build()
+
         object Default : Config() {
             override val value: ConfigData
                 get() = ConfigData(
                     MediaRecorder.AudioSource.MIC,
-                    44100,
+                    16000,
                     AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT
                 )

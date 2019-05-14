@@ -1,24 +1,5 @@
 package com.colagom.common
 
-import java.io.FileOutputStream
-
-fun FileOutputStream.writeWaveHeader(header: WaveHeader) = with(header) {
-    writeString("RIFF")
-    writeInt(36 + fileLength)
-    writeString("WAVE")
-
-    writeString("fmt ")
-    writeInt(16)
-    writeShort(format.id)
-    writeShort(channel.count)
-    writeInt(sampleRate)
-    writeInt(channel.count * sampleRate * format.bitPerSample / 8)
-    writeShort((channel.count * format.bitPerSample / 8).toShort())
-    writeShort(format.bitPerSample)
-
-    writeString("data")
-    writeInt(header.fileLength)
-}
 
 class WaveHeader {
     var format: Format = Format.PCM
