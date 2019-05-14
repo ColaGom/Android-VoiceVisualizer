@@ -8,12 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.colagom.common.writeWaveHeader
 import com.colagom.speech.Recorder
-import com.colagom.speech.VoiceContext
 import com.colagom.speech.VoiceRecord
 import com.colagom.speech.VoiceRecorder
+import com.colagom.speech.surface.VoiceContext
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import kotlin.math.abs
+import java.nio.ByteBuffer
+import java.nio.ByteOrder.LITTLE_ENDIAN
 
 
 class MainActivity : AppCompatActivity(), Recorder.Listener, VoiceContext {
@@ -29,8 +30,20 @@ class MainActivity : AppCompatActivity(), Recorder.Listener, VoiceContext {
     override fun onRecorded(buffer: ByteArray) {
         buffer.copyInto(audioSource, audioLength, 0, buffer.size)
         audioLength += buffer.size
-        val sum = buffer.sumByDouble { abs(it.toInt()) / Byte.MAX_VALUE.toDouble() }
-        amplitudes.add(sum / buffer.size)
+        var maxAmplitude = 0.0
+
+        ByteBuffer.wrap(buffer).order(LITTLE_ENDIAN).let {
+            while (it.hasRemaining()) {
+                val amplitude = it.short.toDouble() / Short.MAX_VALUE
+                if (maxAmplitude < amplitude) {
+                    maxAmplitude = amplitude
+                }
+            }
+        }
+
+        amplitudes.add(maxAmplitude)
+        vv.amplitudes = amplitudes
+        vdv.amplitudes = amplitudes
     }
 
     override fun onFinisehdRecord() {
@@ -69,7 +82,6 @@ class MainActivity : AppCompatActivity(), Recorder.Listener, VoiceContext {
         setContentView(R.layout.activity_main)
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISION)
-        vv.setVoiceContext(this)
 
         val config = VoiceRecord.Config.Default
 

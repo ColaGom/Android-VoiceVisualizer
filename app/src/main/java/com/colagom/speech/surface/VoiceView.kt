@@ -1,4 +1,4 @@
-package com.colagom.speech
+package com.colagom.speech.surface
 
 import android.content.Context
 import android.content.res.Resources
@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.colagom.speech.VoiceRecord
 import kotlin.math.max
 import kotlin.math.min
 
@@ -101,11 +102,6 @@ class VoiceRenderer(private val voiceContext: VoiceContext) : Runnable, SurfaceH
 
     private val strokeWidth by px(2)
     private val padding by px(12)
-
-//    private var barStrokeWidth = dpToPx(3f)
-//    private var marginBar = dpToPx(1f)
-//    private var marginBar = dpToPx(1f)
-//    private var marginBar = dpToPx(1f)
 
     private val maxHolder = "max"
     private val minHolder = "min"
