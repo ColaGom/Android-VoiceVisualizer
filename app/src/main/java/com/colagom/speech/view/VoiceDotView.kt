@@ -14,7 +14,7 @@ class VoiceDotView @JvmOverloads constructor(
         Color.rgb(237, 86, 50)
     }
     private val colorGreen by lazy {
-        Color.rgb(237, 86, 50)
+        Color.rgb(19, 201, 17)
     }
     private val colorGray by lazy {
         Color.rgb(216, 216, 216)
@@ -38,17 +38,17 @@ class VoiceDotView @JvmOverloads constructor(
         val blockHeight = blockWidth
         val lastIdx = amplitudes.lastIndex
         val amplitudeStep = 1.0 / hc
+        val amplitude = amplitudes.last()
 
         for (x in lastIdx downTo lastIdx - wc) {
-            val amplitude = if (x < 0) 0.0 else amplitudes[x]
             val aColor = if (amplitude > maxAmplitude) colorRed else colorGreen
             val disX = lastIdx - x
 
-            for (y in hc downTo 1) {
+            for (y in 0 until hc) {
                 val left = width - (blockWidth * (disX + 1)) - margin * disX
-                val top = (y * blockHeight) + (margin * (y - 1))
-                paintBlock.color = if (amplitude > amplitudeStep * y) aColor else colorGray
+                val top = y * blockHeight + margin * y
 
+                paintBlock.color = if (amplitude > amplitudeStep * (hc - y - 1)) aColor else colorGray
                 canvas.drawRect(left, top, left + blockWidth, top + blockHeight, paintBlock)
             }
         }
