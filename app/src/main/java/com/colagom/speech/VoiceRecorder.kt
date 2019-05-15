@@ -1,7 +1,5 @@
 package com.colagom.speech
 
-import android.util.Log
-
 class VoiceRecorder(private val config: VoiceRecord.Config, override val listener: Recorder.Listener) : Recorder {
     override var state: Recorder.State = Recorder.State.WAIT
 
@@ -9,7 +7,6 @@ class VoiceRecorder(private val config: VoiceRecord.Config, override val listene
         if (state != Recorder.State.WAIT) return
 
         state = Recorder.State.RECORDING
-        debug("start recording")
 
         val record = VoiceRecord()
         record.startRecording()
@@ -24,7 +21,6 @@ class VoiceRecorder(private val config: VoiceRecord.Config, override val listene
                     listener.onRecorded(buffer)
                 }
             }
-            debug("stop recording")
             record.stop()
             record.release()
             listener.onFinisehdRecord()
@@ -34,8 +30,4 @@ class VoiceRecorder(private val config: VoiceRecord.Config, override val listene
     override fun stop() {
         state = Recorder.State.STOP
     }
-}
-
-fun debug(log: String) {
-    Log.d("VoiceRecorder", log)
 }

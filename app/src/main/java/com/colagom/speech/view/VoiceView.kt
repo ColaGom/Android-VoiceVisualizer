@@ -1,7 +1,7 @@
 package com.colagom.speech.view
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
